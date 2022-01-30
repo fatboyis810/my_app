@@ -47,7 +47,8 @@ class UsersController extends Controller
 
             $user = new User();
             $user->fill($request->all());
-
+            $user->password = bcrypt($request->password);
+            
             if ($user->save() == false){
                 $this->response['status'] = -1;
                 $this->response['message'] = '予期せぬエラーが発生しました。';
