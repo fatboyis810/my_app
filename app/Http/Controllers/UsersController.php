@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\common\CommonFunc;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class UsersController extends Controller
@@ -159,24 +160,55 @@ class UsersController extends Controller
         }
     }
 
-    public function deleteUser($id):JsonResponse
+    public function deleteUser($id): JsonResponse
     {
         $user = User::find($id);
 
-        if($user == false){
+        if ($user == false) {
             $this->response['status'] = -1;
             $this->response['message'] = 'ユーザーが見つかりません。';
 
             return response()->json($this->response);
         }
 
-        if($user->delete() == false){
+        if ($user->delete() == false) {
             $this->response['status'] = -1;
             $this->response['message'] = '予期せぬエラーが発生しました。';
 
             return response()->json($this->response);
         }
 
+        return response()->json($this->response);
+    }
+
+    public function search(Request $request): JsonResponse
+    {
+        $search = $request->input('search');
+        $result = [];
+
+        if ($search == null) {
+            $users = DB::table('users')->select('*')->get();
+        } else {
+            $users = DB::table('users')->select('*')
+                ->where('email', 'like', '%' . $search . '%')
+                ->orWhere('user_name', 'like', '%' . $search . '%')
+                ->get();
+        }
+
+        foreach ($users as $user) {
+            $result [] = [
+                'id' => $user->id,
+                'user_name' => $user->user_name,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'gender' => $user->gender,
+                'age' => $user->age,
+                'user_type' => $user->user_type,
+            ];
+        }
+
+        $this->response['result'] = $result;
         return response()->json($this->response);
     }
 }

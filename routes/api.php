@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'v1'], function (){
     Route::get('/user_list', [UsersController::class,'userList']);
     Route::get('/user_edit/{id}', [UsersController::class,'userEdit']);
+    Route::get('/user_search', [UsersController::class,'search']);
 
     Route::post('/make_user', [UsersController::class, 'makeUser']);
     Route::post('/update_user/{id}', [UsersController::class, 'updateUser']);
