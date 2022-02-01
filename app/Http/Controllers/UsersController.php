@@ -118,4 +118,46 @@ class UsersController extends Controller
 
         return response()->json($this->response);
     }
+
+    public function updateUser(Request $request, $id): JsonResponse
+    {
+        try {
+            $validateRes = $this->commonFunc->apiNullValidate($request->all());
+            $validateAgeRes = $this->commonFunc->apiIntegerChecker($request->age);
+
+            if ($validateRes == false) {
+                $this->response['status'] = -1;
+                $this->response['message'] = '全項目を入力してください。';
+
+                return response()->json($this->response);
+            }
+
+            if ($validateAgeRes == false) {
+                $this->response['status'] = -1;
+                $this->response['message'] = '年齢を数字で入力してください';
+
+                return response()->json($this->response);
+            }
+
+            $user = User::find($id);
+            $user->fill($request->all());
+            $user->password = bcrypt($request->password);
+
+            if ($user->save() == false) {
+                $this->response['status'] = -1;
+                $this->response['message'] = '予期せぬエラーが発生しました。';
+
+                return response()->json($this->response);
+            }
+
+            return response()->json($this->response);
+        } catch (Exception $exception) {
+
+            Log::error($exception);
+            $this->response['status'] = -1;
+            $this->response['message'] = '予期せぬエラーが発生しました。';
+
+            return response()->json($this->response);
+        }
+    }
 }

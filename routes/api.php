@@ -24,4 +24,5 @@ Route::group(['prefix' => 'v1'], function (){
     Route::get('/user_edit/{id}', [UsersController::class,'userEdit']);
 
     Route::post('/make_user', [UsersController::class, 'makeUser']);
+    Route::post('/update_user/{id}', [UsersController::class, 'updateUser']);
 });
