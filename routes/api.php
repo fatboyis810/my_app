@@ -25,4 +25,5 @@ Route::group(['prefix' => 'v1'], function (){
 
     Route::post('/make_user', [UsersController::class, 'makeUser']);
     Route::post('/update_user/{id}', [UsersController::class, 'updateUser']);
+    Route::post('/delete_user/{id}', [UsersController::class, 'deleteUser']);
 });

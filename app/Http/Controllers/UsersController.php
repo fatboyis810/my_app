@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\common\CommonFunc;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Psy\Util\Json;
 
 class UsersController extends Controller
 {
@@ -29,7 +28,6 @@ class UsersController extends Controller
     public function makeUser(Request $request): JsonResponse
     {
         try {
-
             $validateRes = $this->commonFunc->apiNullValidate($request->all());
             $validateAgeRes = $this->commonFunc->apiIntegerChecker($request->age);
 
@@ -159,5 +157,26 @@ class UsersController extends Controller
 
             return response()->json($this->response);
         }
+    }
+
+    public function deleteUser($id):JsonResponse
+    {
+        $user = User::find($id);
+
+        if($user == false){
+            $this->response['status'] = -1;
+            $this->response['message'] = 'ユーザーが見つかりません。';
+
+            return response()->json($this->response);
+        }
+
+        if($user->delete() == false){
+            $this->response['status'] = -1;
+            $this->response['message'] = '予期せぬエラーが発生しました。';
+
+            return response()->json($this->response);
+        }
+
+        return response()->json($this->response);
     }
 }
